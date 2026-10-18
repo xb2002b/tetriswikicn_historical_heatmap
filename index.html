@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>俄罗斯方块中文维基 · 历史编辑热力图</title>
+  <meta name="description" content="俄罗斯方块中文维基建站至今的编辑热力图，可按时间、编辑者、命名空间与编辑类型筛选。">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#heatmap">跳到热力图</a>
+
+  <header class="page-header">
+    <div class="header-inner">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">T</div>
+        <div class="brand-text">
+          <h1>俄罗斯方块中文维基 <span>历史编辑热力图</span></h1>
+          <p class="subtitle">
+            建站至今的编辑轨迹 ·
+            <a href="https://tetriswiki.cn" target="_blank" rel="noopener">tetriswiki.cn</a>
+          </p>
+        </div>
+      </div>
+      <div class="header-meta">
+        <span id="generated-at" class="muted"></span>
+        <a class="ghost-link" href="#data-notes">数据说明</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="page">
+    <section class="panel controls" aria-labelledby="controls-title">
+      <h2 id="controls-title" class="sr-only">筛选条件</h2>
+
+      <div class="control-row control-row-top">
+        <div class="field">
+          <span class="field-label">时间范围</span>
+          <div class="preset-group" role="group" aria-label="时间范围预设">
+            <button type="button" class="preset" data-preset="recent">最近一年</button>
+            <button type="button" class="preset" data-preset="all">建站至今</button>
+            <button type="button" class="preset" data-preset="farm">托管时期</button>
+            <button type="button" class="preset" data-preset="indep">独立时期</button>
+            <button type="button" class="preset" data-preset="custom">自定义</button>
+          </div>
+        </div>
+        <div class="field date-field">
+          <label for="date-start">开始</label>
+          <input type="date" id="date-start" autocomplete="off">
+          <span class="date-dash">—</span>
+          <label for="date-end" class="sr-only">结束</label>
+          <input type="date" id="date-end" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="ns-select">命名空间</label>
+          <select id="ns-select">
+            <option value="all">全部</option>
+            <option value="0">条目</option>
+            <option value="2">用户</option>
+            <option value="4">项目</option>
+            <option value="6">文件</option>
+            <option value="8">MediaWiki</option>
+            <option value="10">模板</option>
+            <option value="14">分类</option>
+            <option value="828">模块</option>
+            <option value="other">讨论 / 其他</option>
+          </select>
+        </div>
+        <button type="button" class="reset" id="reset-filters">重置</button>
+      </div>
+
+      <div class="control-row editor-row">
+        <div class="field editor-field">
+          <span class="field-label">编辑者</span>
+          <div id="editor-chips" class="chips" role="group" aria-label="编辑者快捷选择"></div>
+        </div>
+        <div class="field editor-more">
+          <label for="editor-select">更多编辑者</label>
+          <select id="editor-select">
+            <option value="">全部活跃编辑</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="control-row toggles-row">
+        <span class="field-label">包含</span>
+        <div class="toggles" id="toggles">
+          <label class="switch"><input type="checkbox" data-flag="bot"><span>机器人</span></label>
+          <label class="switch"><input type="checkbox" data-flag="imported"><span>导入历史</span></label>
+          <label class="switch"><input type="checkbox" data-flag="anon"><span>匿名编辑</span></label>
+          <label class="switch"><input type="checkbox" data-flag="system"><span>系统导入</span></label>
+          <label class="switch"><input type="checkbox" data-flag="minor" checked><span>小编辑</span></label>
+          <label class="switch"><input type="checkbox" data-flag="reverted" checked><span>被回退</span></label>
+          <label class="switch"><input type="checkbox" data-flag="deleted" checked><span>已删除修订</span></label>
+        </div>
+        <span class="hint" id="filter-note">默认：仅注册用户人工编辑</span>
+      </div>
+    </section>
+
+    <section class="stats-grid" aria-label="当前视图统计">
+      <article class="stat">
+        <span class="stat-label">编辑总数</span>
+        <strong id="stat-total">—</strong>
+        <span class="stat-sub" id="stat-total-sub"></span>
+        <span class="stat-sub" id="stat-total-big"></span>
+      </article>
+      <article class="stat">
+        <span class="stat-label">活跃编辑日</span>
+        <strong id="stat-active">—</strong>
+        <span class="stat-sub" id="stat-active-sub"></span>
+        <span class="stat-sub stat-lead" id="stat-active-lead"
+          title="单领先：当日编辑数或字节数一项最高；双领先：两项都最高"></span>
+      </article>
+      <article class="stat">
+        <span class="stat-label">活跃日均</span>
+        <strong id="stat-avg">—</strong>
+        <span class="stat-sub" id="stat-avg-sub"></span>
+      </article>
+      <article class="stat">
+        <span class="stat-label">本期主编辑</span>
+        <strong id="stat-top" class="stat-name">—</strong>
+        <span class="stat-sub" id="stat-top-sub"></span>
+      </article>
+    </section>
+
+    <section class="panel heatmap-panel" id="heatmap" aria-labelledby="heatmap-title">
+      <div class="panel-head">
+        <div class="panel-head-text">
+          <h2 id="heatmap-title">编辑热力</h2>
+          <p class="panel-sub" id="heatmap-sub"></p>
+        </div>
+        <div class="heatmap-actions">
+          <span class="legend-title" id="legend-title">强度</span>
+          <div class="legend" id="legend"></div>
+          <span class="legend-hint" id="legend-hint" aria-live="polite"></span>
+        </div>
+      </div>
+      <div class="heatmap-wrap">
+        <div class="heatmap-scroll" id="heatmap-scroll">
+          <div class="heatmap-table" id="heatmap-table">
+            <div class="heatmap-months" id="heatmap-months"></div>
+            <div class="heatmap-body">
+              <div class="weekday-labels" aria-hidden="true">
+                <span></span><span>一</span><span></span><span>三</span>
+                <span></span><span>五</span><span></span>
+              </div>
+              <div class="weeks" id="heatmap-weeks"></div>
+            </div>
+          </div>
+        </div>
+        <div class="tooltip" id="tooltip" role="tooltip" hidden></div>
+      </div>
+      <p class="heatmap-foot" id="heatmap-foot"></p>
+    </section>
+
+    <div class="lower-grid">
+      <section class="panel palette-panel" aria-labelledby="palette-title">
+        <div class="panel-head">
+          <div class="panel-head-text">
+            <h2 id="palette-title">编辑者配色</h2>
+            <p class="panel-sub" id="palette-sub"></p>
+          </div>
+        </div>
+        <div class="palette-list" id="palette-list"></div>
+        <div class="palette-other" id="palette-other"></div>
+        <p class="palette-note">
+          配色定义在 <code>js/palette.js</code>；点击任一编辑者即可切换个人热力图。
+        </p>
+      </section>
+
+      <section class="panel notes" id="data-notes" aria-labelledby="notes-title">
+        <div class="panel-head">
+          <div class="panel-head-text">
+            <h2 id="notes-title">数据说明</h2>
+            <p class="panel-sub">口径、计数与已知限制</p>
+          </div>
+        </div>
+        <div id="notes-content" class="notes-content"></div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="page-footer">
+    <p>
+      静态页面，热力图不请求在线 API。数据由
+      <code>scripts/fetch_edits.py</code> 生成，时间统一为 Asia/Shanghai（UTC+8）。
+    </p>
+    <p class="muted" id="footer-meta"></p>
+  </footer>
+
+  <dialog class="day-dialog" id="day-dialog" aria-labelledby="day-title">
+    <div class="dialog-head">
+      <div class="dialog-head-text">
+        <h2 id="day-title">—</h2>
+        <p class="panel-sub" id="day-sub"></p>
+      </div>
+      <button type="button" class="icon-button" id="day-close" aria-label="关闭">×</button>
+    </div>
+    <div class="dialog-toolbar" id="day-toolbar"></div>
+    <div class="day-summary" id="day-summary"></div>
+    <div class="dialog-list" id="day-list"></div>
+  </dialog>
+
+  <div class="info-tip" id="info-tip" role="tooltip" hidden></div>
+
+  <script src="data/meta.js" defer></script>
+  <script src="data/edits.js" defer></script>
+  <script src="js/palette.js" defer></script>
+  <script src="js/app.js" defer></script>
+</body>
+</html>
